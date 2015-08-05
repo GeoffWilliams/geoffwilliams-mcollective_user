@@ -1,8 +1,8 @@
 {
   "name": "geoffwilliams-mcollective_user",
   "version": "0.1.0",
-  "author": "geoffwilliams",
-  "summary": null,
+  "author": "Geoff Williams <geoff.williams@puppetlabs.com>",
+  "summary": "Create an mcollective user (register a new cert on master, install cert + agent on client)",
   "license": "Apache-2.0",
   "source": "https://github.com/GeoffWilliams/geoffwilliams-mcollective_user",
   "project_page": "https://github.com/GeoffWilliams/geoffwilliams-mcollective_user",
