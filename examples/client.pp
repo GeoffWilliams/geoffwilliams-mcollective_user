@@ -1,5 +1,4 @@
-mcollective_user::client { "r10k-deploy":
-    local_user_name  => "git",
+mcollective_user::client { "git":
     local_user_dir   => "/home/git",
     activemq_brokers => [ "localhost" ],
 }

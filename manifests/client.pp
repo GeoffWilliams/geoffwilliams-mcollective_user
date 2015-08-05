@@ -7,6 +7,7 @@
 # [*cert_name*]
 #   cert_name (AKA MCollective username) to use.  Defaults to $title
 # [*local_user_name*]
+#   This parameter does not exist, but if it did it would be:
 #   local system user to configure for mcollective.  Defaults to $title
 # [*local_user_dir*]
 #   home directory for local user.  Defaults to /home/$title
@@ -21,7 +22,7 @@
 #   false you must manage this yourself
 define mcollective_user::client(
     $cert_name = $title,
-    $local_user_name = $title,
+#    $local_user_name = $title,
     $local_user_dir = "/home/${title}",
     $activemq_brokers,
     $logfile = false,
@@ -29,6 +30,9 @@ define mcollective_user::client(
 ) {
 
   include puppet_enterprise::params
+
+  # PE-11416 blocks the local user name being different to the mcollective user
+  $local_user_name = $cert_name
   # If user supplies custom logdir use it and have user be responsible for
   # creating directory structure, etc.  Otherwise just create a directory
   # under /var/log and allow access
@@ -52,7 +56,8 @@ define mcollective_user::client(
     home_dir         => $local_user_dir,
     logfile          => $_logfile,
     cert_name        => $local_user_name,
-    client_name      => $client_name,
+    client_name      => $cert_name,
+    keypair_name     => $cert_name,
   }
 
   # Copy the public key to local MCollective server's public keys area
