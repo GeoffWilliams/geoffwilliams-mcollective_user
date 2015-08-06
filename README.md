@@ -15,46 +15,68 @@
 
 ## Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
-
+Allows creation of additional MCollective users EASILY.
 ## Module Description
 
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
-
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
-
+Provides support for:
+* Registering new MCollective users on machines managed by the puppet master
+  running MCollective
+* Installing an MCollective client to an external MCollective server (puppet master)
 ## Setup
 
 ### What mcollective_user affects
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
+* Installs and configures an mcollective user for a local unix user
+* MCollective user and local unix user must be identically named (PE-11416)
 
 ### Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-### Beginning with mcollective_user
-
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+* You *MUST* have accurate timekeeping on all machines your interacting with
 
 ## Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
+### A new MCollective user on a machine managed by the same puppet master
+
+### A new MCollective user on a machine managed by an EXTERNAL puppet master
+
+#### The theory
+PE-11461 effectively prevents the certificate request process from working
+correctly so we must manually generate all required certificates on the master
+and copy them to the client.
+
+To do this we must generate a certificate, public key and private key for:
+* The machine name:  `puppet cert generate FQDN_OF_CLIENT_MACHINE`
+_AND_
+* The MCollective username `puppet cert generate MCOLLECTIVE_USERNAME`
+
+##### Example certificate creation (on the external puppet master)
+```shell
+puppet cert generate jenkins.megacorp.com
+puppet cert generate r10k-deploy
+```
+
+Once the above steps have been performed, we need to copy a bunch of files from the external puppet master to the client machine and this is where this module comes in.
+
+*We must also copy the MCOLLECTIVE_USERNAME public key to mcollective's public key area*
+
+##### Files we will need:
+The contents of the following files should be loaded into hiera so they can be made available as variables
+* The MCollective CA certificate from `/etc/puppetlabs/mcollective/ssl/ca.cert.pem`
+* MCollective user private key from `/etc/puppetlabs/puppet/ssl/private_keys/USERNAME.pem`
+* MCollective user public key from `/etc/puppetlabs/puppet/ssl/public_keys/USERNAME.pem`
+* Machine certificate from `/etc/puppetlabs/puppet/ssl/certs/FQDN_OF_CLIENT_MACHINE.pem`
+* Machine private key from `/etc/puppetlabs/puppet/ssl/private_keys/FQDN_OF_CLIENT_MACHINE.pem`
+* MCollective public key from `/etc/puppetlabs/mcollective/ssl/mcollective-public.pem`
+
+##### Information we will need:
+* Stomp password from `/etc/puppetlabs/mcollective/credentials`
+* MCollective broker port (61613)
+* hostname of external puppet master
+
+
+
+#### On the client
+
 
 ## Reference
 
@@ -65,15 +87,19 @@ with things. (We are working on automating this section!)
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+This module is not supported by Puppet Labs.  Use at own risk.  Only tested on RHEL7.  Requires Puppet Enterprise to work.
+
+## Troubleshooting
+Things to check if doesn't work:
+* checksums match on the all of the above listed files on both the master and agent
+* Ports are open (check that you can open a socket)
+* Clocks are accurate
+
+## Important note
+* You must NEVER store the *private* keys in hiera in plain-text as they grant access to your MCollective system
+* Encrypt them using [hiera-eyaml](https://github.com/TomPoulton/hiera-eyaml)!
+
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+PRs welcome
