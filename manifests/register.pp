@@ -30,6 +30,8 @@ define mcollective_user::register(
 
   if $install_pk {
     # Once generated, copy the private key into MCollective's known public keys dir
-    mcollective_user::install_pk { $cert_name: }
+    mcollective_user::install_pk { $cert_name: 
+      local_system_user => "root",
+    }
   }
 }
