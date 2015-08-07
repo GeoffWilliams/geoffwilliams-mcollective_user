@@ -11,11 +11,12 @@
 define mcollective_user::register(
     $cert_name     = $title,
     $generate_cert = true,
+    $install_pk    = true,
 ) { 
 
   if $generate_cert {
     # generata and accept a certificate for r10k user
-    exec { "r10k_mco_cert":
+    exec { "${cert_name}_mco_cert":
       command  => "puppet certificate generate ${cert_name} --ca-location local && puppet cert sign ${cert_name}",
       creates  => "${::settings::ssldir}/ca/signed/${cert_name}.pem",
       path     => [
@@ -27,6 +28,8 @@ define mcollective_user::register(
     }
   }
 
-  # Once generated, copy the private key into MCollective's known public keys dir
-  mcollective_user::install_pk { $cert_name: }
+  if $install_pk {
+    # Once generated, copy the private key into MCollective's known public keys dir
+    mcollective_user::install_pk { $cert_name: }
+  }
 }

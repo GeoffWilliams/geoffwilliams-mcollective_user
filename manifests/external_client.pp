@@ -7,15 +7,19 @@
 # * external CA
 # * other small details
 
+# [*activemq_servers*]
+#   ARRAY of activemq_servers to reach out to (equivalent to `activemq_brokers`
+#   in `puppet_enterprise` module.  Optional and defaults to an array with a 
+#   single element referencing the external mcollective server
 
 define mcollective_user::external_client(
-    $activemq_brokers,
+    $activemq_servers       = false,
     $logfile,
     $cert_name              = $title,
     $client_name            = $title,
     $keypair_name           = $title,
     $create_user            = $puppet_enterprise::params::mco_create_client_user,
-    $home_dir               = "/var/lib/${title}",
+    $home_dir               = "/home/${title}",
     $main_collective        = 'mcollective',
 
     $external_stomp_password,
@@ -37,6 +41,7 @@ define mcollective_user::external_client(
     
 
 ) {
+  
   include puppet_enterprise::params
   $cert_dir = "${home_dir}/.mcollective.d"
   $mco_plugin_libdir = $puppet_enterprise::params::mco_plugin_libdir
@@ -50,6 +55,12 @@ define mcollective_user::external_client(
   # copy the server name to what the template expects
   $mco_server_name = $external_mco_server_name
   
+  if $activemq_servers {
+    $activemq_brokers = $activemq_servers
+  } else {
+    $activemq_brokers = [ $external_mco_server_name ]
+  }
+
   File {
     owner => $client_name,
     group => $client_name,
@@ -68,6 +79,15 @@ define mcollective_user::external_client(
 
   file { $logfile:
     ensure => file
+  }
+
+  # handy tool for generateing paths
+  file { "/usr/local/bin/mco_path.rb":
+    ensure => file,
+    owner  => "root",
+    group  => "root",
+    mode   => "0755",
+    source => "puppet:///modules/${module_name}/mco_path.rb",
   }
 
   # Template uses:
@@ -139,14 +159,14 @@ define mcollective_user::external_client(
   # ==== below needed??????
 
   # MCO public key to mcollective public keys area
-  mcollective_user::install_pk { $external_mco_server_name:
-    content           => $external_mco_server_public_key,
-    local_system_user => $client_name,
-  }
+#  mcollective_user::install_pk { $external_mco_server_name:
+#    content           => $external_mco_server_public_key,
+#    local_system_user => $client_name,
+#  }
 
   # Agent public key to mcollective public keys area
-  mcollective_user::install_pk { $cert_name: 
-    content => $external_client_public_key_pem,
-  }
+#  mcollective_user::install_pk { $cert_name: 
+#    content => $external_client_public_key_pem,
+#  }
 
 }
