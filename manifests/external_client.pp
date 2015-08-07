@@ -14,7 +14,7 @@
 
 define mcollective_user::external_client(
     $activemq_servers       = false,
-    $logfile,
+    $log_file               = false,
     $cert_name              = $title,
     $client_name            = $title,
     $keypair_name           = $title,
@@ -74,6 +74,21 @@ define mcollective_user::external_client(
   if $create_user {
     puppet_enterprise::mcollective::client::user { $client_name:
       home_dir => $home_dir,
+    }
+  }
+
+
+  # Template refers to `logfile` and we allow user to specify `log_file` -- urgh!
+  if $log_file {
+    $logfile = $log_file
+  } else {
+    $logdir = "/var/log/mcollective_${cert_name}"
+    $logfile = "${logdir}/mcollective.log"
+    file { $logdir:
+      ensure => directory,
+      owner  => $local_user_name,
+      group  => $local_user_name,
+      mode   => "0755",
     }
   }
 
