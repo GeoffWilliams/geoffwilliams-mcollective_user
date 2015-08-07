@@ -17,7 +17,7 @@ define mcollective_user::register(
   if $generate_cert {
     # generata and accept a certificate for r10k user
     exec { "${cert_name}_mco_cert":
-      command  => "puppet certificate generate ${cert_name} --ca-location local && puppet cert sign ${cert_name}",
+      command  => "puppet cert generate ${cert_name}",
       creates  => "${::settings::ssldir}/ca/signed/${cert_name}.pem",
       path     => [
         "/opt/puppetlabs/puppet/bin",
