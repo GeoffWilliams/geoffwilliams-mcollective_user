@@ -21,12 +21,12 @@
 #   Ask the puppet-enterprise module to create the local system user for us. If
 #   false you must manage this yourself
 define mcollective_user::client(
-    $cert_name = $title,
+    $cert_name        = $title,
 #    $local_user_name = $title,
-    $local_user_dir = "/home/${title}",
+    $local_user_dir   = "/home/${title}",
     $activemq_brokers,
-    $logfile = false,
-    $create_user = false,
+    $logfile          = false,
+    $create_user      = true,
 ) {
 
   include puppet_enterprise::params
