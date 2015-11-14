@@ -1,0 +1,6 @@
+fixtures:
+  forge_modules:
+      puppet_enterprise:
+        repo: "geoffwilliams-puppet_enterprise"
+  symlinks:
+    mcollective_user: "#{source_dir}"

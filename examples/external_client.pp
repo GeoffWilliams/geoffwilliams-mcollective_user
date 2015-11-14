@@ -1,11 +1,11 @@
 include puppet_enterprise::params
-mcollective_user::external_client { "mco-panic":
+mcollective_user::external_client { "mco-2":
   stomp_port                      => 61613,
-  logfile                         => "/var/log/fuck.log",
-  home_dir                        => "/home/mco-panic",
-  activemq_brokers                => ["pe-puppet.localdomain"],
+  log_file                        => "/var/log/mco-2.log",
+  home_dir                        => "/home/mco-2",
+  activemq_servers                => ["pe-puppet.localdomain"],
 
-  machine_fqdn => "puppet1.localdomain",
+  machine_fqdn                    => "puppet1.localdomain",
 
   external_stomp_password         => hiera("external_stomp_password"),
 
