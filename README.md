@@ -1,4 +1,5 @@
 # mcollective_user
+[![Build Status](https://travis-ci.org/GeoffWilliams/geoffwilliams-mcollective_user.svg)](https://travis-ci.org/GeoffWilliams/geoffwilliams-mcollective_user)
 
 #### Table of Contents
 
