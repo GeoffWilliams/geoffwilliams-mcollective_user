@@ -8,7 +8,6 @@
   "project_page": "https://github.com/GeoffWilliams/geoffwilliams-mcollective_user",
   "issues_url": "https://github.com/GeoffWilliams/geoffwilliams-mcollective_user/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ]
 }
 
