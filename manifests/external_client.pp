@@ -170,18 +170,4 @@ define mcollective_user::external_client(
     content => $machine_private_key,
   }
 
-
-  # ==== below needed??????
-
-  # MCO public key to mcollective public keys area
-#  mcollective_user::install_pk { $external_mco_server_name:
-#    content           => $external_mco_server_public_key,
-#    local_system_user => $client_name,
-#  }
-
-  # Agent public key to mcollective public keys area
-#  mcollective_user::install_pk { $cert_name: 
-#    content => $external_client_public_key_pem,
-#  }
-
 }
